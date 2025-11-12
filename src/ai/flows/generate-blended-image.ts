@@ -14,12 +14,12 @@ const GenerateBlendedImageInputSchema = z.object({
   modelImage: z
     .string()
     .describe(
-      'The image of the model, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
+      "The image of the model, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
   productImage: z
     .string()
     .describe(
-      'The image of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
+      "The image of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
   action: z.string().describe('The action/pose of the model with the product.'),
   style: z.string().describe('The style of the photograph (e.g., full-body shot, close-up).'),
@@ -53,7 +53,7 @@ const generateBlendedImageFlow = ai.defineFlow(
   },
   async input => {
     const {modelImage, productImage} = input;
-    const {media} = await ai.generate({
+    const {media, content} = await ai.generate({
       model: 'googleai/gemini-2.5-flash-image-preview',
       prompt: [
         {text: generateBlendedImagePromptText},
@@ -65,6 +65,10 @@ const generateBlendedImageFlow = ai.defineFlow(
       },
     });
 
-    return {generatedImage: media!.url!};
+    if (!media?.url) {
+      throw new Error('Image generation failed. Please try again.');
+    }
+
+    return {generatedImage: media.url};
   }
 );
