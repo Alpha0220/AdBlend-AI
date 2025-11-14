@@ -26,7 +26,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
-import { Loader2, UploadCloud, X } from "lucide-react";
+import { Download, Loader2, UploadCloud, X } from "lucide-react";
 import { handleGenerateImage } from "@/app/actions";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
@@ -194,6 +194,18 @@ export default function AdBlendForm() {
     setIsLoading(false);
   }
 
+  const handleDownload = () => {
+    if (!generatedImage) return;
+
+    const link = document.createElement("a");
+    link.href = generatedImage;
+    link.download = "adblend-ai-generated-image.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   return (
     <div className="container mx-auto py-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
@@ -360,6 +372,14 @@ export default function AdBlendForm() {
               )}
             </div>
           </CardContent>
+           {generatedImage && !isLoading && (
+            <CardFooter>
+              <Button onClick={handleDownload} className="w-full">
+                <Download className="mr-2 h-4 w-4" />
+                Download Image
+              </Button>
+            </CardFooter>
+          )}
         </Card>
       </div>
     </div>
